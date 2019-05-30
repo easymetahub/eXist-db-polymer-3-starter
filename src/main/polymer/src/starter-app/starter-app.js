@@ -122,6 +122,12 @@ class StarterApp extends PolymerElement {
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title>Starter</div>
+            <template is="dom-if" if="[[showLogin]]">
+              <a href="login.html">login</a>
+            </template>
+            <template is="dom-if" if="[[!showLogin]]">
+              <a href="index.html?logout=true">logout</a>
+            </template>
           </app-toolbar>
           </app-header>
             <section></section>
@@ -131,7 +137,8 @@ class StarterApp extends PolymerElement {
   }
   static get properties() {
     return {
-      params: { type: Object, notify: true }
+      params: { type: Object, notify: true },
+      showLogin: { type: Boolean, notify: true, value: false }
     };
   }
 }
