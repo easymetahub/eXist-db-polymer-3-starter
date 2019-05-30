@@ -16,7 +16,7 @@ return
     <meta name="viewport" content="width=device-width, minimum-scale=1, initial-scale=1, user-scalable=yes"/>
     <title>Starter App</title>
     <meta name="description" content="Starter App"/>
-    <link rel="stylesheet" href="resources/styles.css"/>
+    <link rel="stylesheet" href="style.css"/>
     <script src="./node_modules/@webcomponents/webcomponentsjs/webcomponents-loader.js"></script>
     <script type="module" src="./src/starter-app/starter-app.js"></script>
 </head>
