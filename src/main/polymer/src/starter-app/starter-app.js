@@ -28,83 +28,21 @@ class StarterApp extends PolymerElement {
         app-drawer-layout {
           background-color: lightgrey;
         }
+        app-drawer-layout:not([narrow]) [drawer-toggle] {
+          display: none;
+        }
         section {
           background-color: white;
           height: 100%;
           overflow: auto;
         }
-        vaadin-split-layout {
-          background-color: white;
-          height: 100%;
-        }
-        .card {
-          box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-          padding: 8px;
-          margin: 4px;
-          border-radius: 5px;
-          background-color: #fff;
-          color: #757575;
-        }
-        .flex-horizontal {
-          @apply(--layout-horizontal);
-        }
-        .flex-vertical {
-          @apply(--layout-vertical);
-        }
-        .flexchild {
-          @apply(--layout-flex);
-        }
         #username {
           color: white;
-        }
-        paper-item {
-          cursor: pointer;
         }
         app-toolbar {
           background-color: grey;
           color: #fff;
         }
-        .unassignednode  {
-          background-color: lightgrey;
-          color: black;
-          height: 20px;
-          padding: 3px;
-          margin-top: 3px;
-        }
-
-        .rootnode  {
-          background-color: seagreen;
-          color: black;
-          height: 20px;
-          padding: 3px;
-          margin-top: 3px;
-        }
-
-        .dependentnode  {
-          background-color: steelblue;
-          color: black;
-          height: 20px;
-          padding: 3px;
-          margin-top: 3px;
-        }
-
-        .referencenode  {
-          background-color: chocolate;
-          color: black;
-          height: 20px;
-          padding: 3px;
-          margin-top: 3px;
-        }
-
-        #savechanges {
-          width: 90%;
-        }
-
-        #harvestdata {
-          width: 90%;
-        }
-
-
       </style>
       <iron-location id="sourceLocation" query="{{query}}" hash="{{hash}}"></iron-location>
       <iron-query-params id="sourceParams" params-string="{{query}}" params-object="{{params}}"></iron-query-params>
@@ -127,12 +65,6 @@ class StarterApp extends PolymerElement {
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title>Starter</div>
             <span>Hello [[user.name]]</span>
-            <template is="dom-if" if="[[user.userid]]">
-              <a href="login.html">login</a>
-            </template>
-            <template is="dom-if" if="[[!user.userid]]">
-              <a href="index.html?logout=true">logout</a>
-            </template>
           </app-toolbar>
           </app-header>
             <section></section>
@@ -146,11 +78,6 @@ class StarterApp extends PolymerElement {
       user: { type: Object, notify: true }
     };
   }
-
-  _isEqualTo(title, string) {
-    return title == string;
-  }
-
 
   handleUserData(request){
     var myResponse = request.detail.response;
