@@ -108,6 +108,10 @@ class StarterApp extends PolymerElement {
       </style>
       <iron-location id="sourceLocation" query="{{query}}" hash="{{hash}}"></iron-location>
       <iron-query-params id="sourceParams" params-string="{{query}}" params-object="{{params}}"></iron-query-params>
+      <iron-ajax auto="true"  id="whoAmI"
+        url="modules/who-am-i.xq"
+        handle-as="json"
+        on-response="handleUserData"></iron-ajax>
       <app-drawer-layout fullbleed>
         <app-drawer slot="drawer">
           <app-toolbar>
@@ -122,10 +126,11 @@ class StarterApp extends PolymerElement {
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title>Starter</div>
-            <template is="dom-if" if="[[showLogin]]">
+            <span>Hello [[user.name]]</span>
+            <template is="dom-if" if="[[user.userid]]">
               <a href="login.html">login</a>
             </template>
-            <template is="dom-if" if="[[!showLogin]]">
+            <template is="dom-if" if="[[!user.userid]]">
               <a href="index.html?logout=true">logout</a>
             </template>
           </app-toolbar>
@@ -138,8 +143,19 @@ class StarterApp extends PolymerElement {
   static get properties() {
     return {
       params: { type: Object, notify: true },
-      showLogin: { type: Boolean, notify: true, value: false }
+      user: { type: Object, notify: true }
     };
+  }
+
+  _isEqualTo(title, string) {
+    return title == string;
+  }
+
+
+  handleUserData(request){
+    var myResponse = request.detail.response;
+    console.log(myResponse);
+    this.user = myResponse;
   }
 }
 
