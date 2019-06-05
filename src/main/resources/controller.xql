@@ -13,6 +13,7 @@ declare variable $local:user := $local:login_domain || '.user';
 
 let $logout := request:get-parameter("logout", ())
 let $set-user := login:set-user($local:login_domain, (), false())
+let $user-id := request:get-attribute($local:user)
 return
     if ($exist:path eq '') 
     then
@@ -26,11 +27,11 @@ return
         </dispatch>
     else if (ends-with($exist:resource, ".xq")) 
     then 
-        if (request:get-attribute("org.exist-db.mysec.user")) 
+        if ($user-id) 
         then
             (: the html page is run through view.xql to expand templates :)
             <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <set-attribute name="user-id" value="{request:get-attribute("org.exist-db.mysec.user")}"/>
+                <set-attribute name="user-id" value="{$user-id}"/>
                 <set-attribute name="$exist:prefix" value="{$exist:prefix}"/>
                 <set-attribute name="$exist:controller" value="{$exist:controller}"/>
             </dispatch>
