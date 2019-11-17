@@ -7,9 +7,18 @@ declare namespace output = "http://www.w3.org/2010/xslt-xquery-serialization";
 declare option output:method "json";
 declare option output:media-type "application/json";
 
-let $user:= request:get-attribute("user-id")
+let $id := sm:id()
+let $base := ($id//sm:effective, $id//sm:real)[1]
+let $tuser := request:get-parameter("user", ())
 
-let $name := if ($user) then sm:get-account-metadata($user, xs:anyURI('http://axschema.org/namePerson')) else 'Guest'
-let $group := if ($user) then sm:get-user-groups($user) else ('guest')
+let $user := $base/sm:username/text()
+let $name := sm:get-account-metadata($user, xs:anyURI('http://axschema.org/namePerson'))
+let $group := $base//sm:group/text()
 return
-    map { "userid" : $user, "name" : $name, "groups" : array { $group } }
+    map {
+        "error": if ($tuser and ($tuser ne $user)) then fn:true() else fn:false(),
+        "userid" : $user, 
+        "name" : $name, 
+        "groups" : array { $group } 
+        
+    }

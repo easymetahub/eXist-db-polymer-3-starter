@@ -8,38 +8,28 @@ declare variable $exist:controller external;
 declare variable $exist:prefix external;
 declare variable $exist:root external;
 
-declare variable $local:login_domain := "org.exist-db.mysec";
-declare variable $local:user := $local:login_domain || '.user';
-
 let $logout := request:get-parameter("logout", ())
-let $set-user := login:set-user($local:login_domain, (), false())
-let $user-id := request:get-attribute($local:user)
+let $user := login:set-user("com.easymetahub.login", (), false())
 return
     if ($exist:path eq '') 
     then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <redirect url="{request:get-uri()}/"/>
         </dispatch>
-    else if (($exist:path eq "/") or ($logout)) 
+    else if ($exist:path eq "/") 
     then
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-            <redirect url="{request:get-uri()}/login.html"/>
+            <redirect url="{request:get-uri()}/index.html"/>
         </dispatch>
-    else if (ends-with($exist:resource, ".xq")) 
+    else if (contains($exist:path, "modules/")) 
     then 
-        if ($user-id) 
-        then
-            (: the html page is run through view.xql to expand templates :)
-            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <set-attribute name="user-id" value="{$user-id}"/>
-                <set-attribute name="$exist:prefix" value="{$exist:prefix}"/>
-                <set-attribute name="$exist:controller" value="{$exist:controller}"/>
-            </dispatch>
-        else
-            <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
-                <cache-control cache="yes"/>
-            </dispatch>
-    else
+(
+    <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
+        <cache-control cache="no"/>
+    </dispatch>
+    
+(: Resource paths starting with $shared are loaded from the shared-resources app :)
+)    else
         (: everything else is passed through :)
         <dispatch xmlns="http://exist.sourceforge.net/NS/exist">
             <cache-control cache="yes"/>
