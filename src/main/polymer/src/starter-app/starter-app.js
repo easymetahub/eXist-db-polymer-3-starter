@@ -14,6 +14,7 @@ import '@polymer/paper-button/paper-button.js';
 import '@polymer/paper-dialog/paper-dialog.js';
 import '@polymer/paper-icon-button/paper-icon-button.js';
 import '@polymer/paper-input/paper-input.js';
+import '@vaadin/vaadin-grid/vaadin-grid.js';
 
 /**
  * @customElement
@@ -39,6 +40,9 @@ class StarterApp extends PolymerElement {
           height: 100%;
           overflow: auto;
         }
+        #userdata {
+          width: 80%;
+        }
         #username {
           color: white;
         }
@@ -57,14 +61,34 @@ class StarterApp extends PolymerElement {
         url="modules/who-am-i.xq"  
         handle-as="json"
         on-response="_onLoginResponse"></iron-ajax>
+      <iron-ajax id="logoutAction" 
+        url="modules/who-am-i.xq"  
+        handle-as="json"
+        on-response="_onLogoutResponse"></iron-ajax>
       <paper-dialog id="login">
         <h2>Login</h2>
+        <template is="dom-if" if="[[user.error]]">
+          <p style="color: red;">Invalid password</p>
+        </template>
         <paper-input label="user" value="{{logindata.user}}"></paper-input>
         <paper-input label="password" value="{{logindata.password}}" type="password"></paper-input>
         <div class="buttons">
           <paper-button dialog-dismiss>Close</paper-button>
           <paper-button on-click="_attemptUserLogin">Login</paper-button>
         </div>
+      </paper-dialog>
+      <paper-dialog id="userdata">
+        <h2>Groups</h2>
+        <vaadin-grid  theme="compact wrap-cell-content column-borders row-stripes" items="[[user.groups]]"  height-by-rows>
+          <vaadin-grid-column flex-grow="1">
+            <template class="header">ID</template>
+            <template>[[item.id]]</template>
+          </vaadin-grid-column>
+          <vaadin-grid-column flex-grow="7">
+            <template class="header">Description</template>
+            <template>[[item.description]]</template>
+          </vaadin-grid-column>
+        </vaadin-grid>
       </paper-dialog>
       <app-drawer-layout fullbleed>
         <app-drawer slot="drawer">
@@ -80,7 +104,10 @@ class StarterApp extends PolymerElement {
           <app-toolbar>
             <paper-icon-button icon="menu" drawer-toggle></paper-icon-button>
             <div main-title>Starter</div>
-            <paper-button on-click="_openLoginDialog" raised>Hello [[user.name]]</paper-icon-button>
+            <paper-button on-click="_openLoginDialog" raised>Hello [[user.name]]</paper-button>
+            <template is="dom-if" if="[[_isLoggedIn(user.id)]]">
+              <paper-icon-button on-click="_attemptUserLogout" icon="close" raised></paper-icon-button>
+            </template>
           </app-toolbar>
           </app-header>
             <section></section>
@@ -97,7 +124,16 @@ class StarterApp extends PolymerElement {
   }
 
   _openLoginDialog() {
-    this.$.login.open();
+    if (this.user.id == 'guest') {
+      this.$.login.open();
+    } else {
+      this.$.userdata.open();
+    }
+  }
+
+  _attemptUserLogout() {
+    this.$.logoutAction.params = { 'logout' : true };
+    this.$.logoutAction.generateRequest();
   }
 
   _attemptUserLogin() {
@@ -107,13 +143,21 @@ class StarterApp extends PolymerElement {
   }
 
   _onLoginResponse(e) {
-    var resp = e.detail.response;
-    if (resp.error == false) {
-      this.user = resp;
-      this.$.login.close();
+    let resp = e.detail.response;
+    this.user = resp;
+    if (resp.error) {
     } else {
-      alert('error');
+      this.$.login.close();
     }
+  }
+
+  _onLogoutResponse(e) {
+    let resp = e.detail.response;
+    this.user = resp;
+  }
+
+  _isLoggedIn(a) {
+    return (a != 'guest');
   }
 
   handleUserData(request){
