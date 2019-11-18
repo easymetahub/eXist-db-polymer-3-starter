@@ -30,8 +30,8 @@ let $properties :=
 	for $key in sm:get-account-metadata-keys()
 	return if (fn:exists(sm:get-account-metadata($user, $key))) then map { map:get($names, $key) : sm:get-account-metadata($user, $key) } else ()
 return map:merge((
+    if ($tuser and ($tuser ne $user)) then map { "error" : fn:true() } else (),
     map {
-        "error": if ($tuser and ($tuser ne $user)) then fn:true() else fn:false(),
         "id" : $user, 
         "groups" : array { 
         	for $group in  $groups
