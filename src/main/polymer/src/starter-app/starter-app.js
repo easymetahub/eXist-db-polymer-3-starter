@@ -21,6 +21,11 @@ import '@vaadin/vaadin-grid/vaadin-grid.js';
  * @polymer
  */
 class StarterApp extends PolymerElement {
+
+  /**
+   *
+   * @returns {HTMLTemplateElement}
+   */
   static get template() {
     return html`
       <style>
@@ -115,6 +120,11 @@ class StarterApp extends PolymerElement {
       </app-drawer-layout>
     `;
   }
+
+  /**
+   *
+   * @returns {{params: {type: *, notify: boolean}, user: {type: *, notify: boolean}, logindata: {type: *, value: {password: string, user: string}, notify: boolean}}}
+   */
   static get properties() {
     return {
       params: { type: Object, notify: true },
@@ -123,6 +133,10 @@ class StarterApp extends PolymerElement {
     };
   }
 
+  /**
+   *
+   * @private
+   */
   _openLoginDialog() {
     if (this.user.id == 'guest') {
       this.$.login.open();
@@ -131,17 +145,30 @@ class StarterApp extends PolymerElement {
     }
   }
 
+  /**
+   *
+   * @private
+   */
   _attemptUserLogout() {
     this.$.logoutAction.params = { 'logout' : true };
     this.$.logoutAction.generateRequest();
   }
 
+  /**
+   *
+   * @private
+   */
   _attemptUserLogin() {
     let a = this.logindata;
     this.$.loginAction.params = this.logindata;
     this.$.loginAction.generateRequest();
   }
 
+  /**
+   *
+   * @param e
+   * @private
+   */
   _onLoginResponse(e) {
     let resp = e.detail.response;
     this.user = resp;
@@ -151,15 +178,30 @@ class StarterApp extends PolymerElement {
     }
   }
 
+  /**
+   *
+   * @param e
+   * @private
+   */
   _onLogoutResponse(e) {
     let resp = e.detail.response;
     this.user = resp;
   }
 
+  /**
+   *
+   * @param a
+   * @returns {boolean}
+   * @private
+   */
   _isLoggedIn(a) {
     return (a != 'guest');
   }
 
+  /**
+   *
+   * @param request
+   */
   handleUserData(request){
     var myResponse = request.detail.response;
     console.log(myResponse);
